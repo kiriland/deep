@@ -1,0 +1,26 @@
+.drawing {
+  float: left;
+}
+
+body {
+  background-color: #F5F5F6;
+  overflow: hidden;
+}
+
+#window:disabled {
+  background-color: white;
+  font-size: 20px;
+  text-align: right;
+}
+
+#bootstrap-overrides div {
+  padding: -15px;
+}
+
+#window {
+  top: 0;
+  left: 0;
+  margin: 0;
+  margin-left: 0;
+}
+/*# sourceMappingURL=what.css.map */

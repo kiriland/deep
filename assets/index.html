@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+   <head lang="en">
+      <meta charset="UTF-8">
+      <meta name="viewport" content=" initial-scale=1, shrink-to-fit=no">
+      <link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+      <script src="jquery.min.js"></script>
+      <script src="popper.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="what.css">
+   </head>
+   <body id="bootstrap-overrides">
+      <nav class="navbar navbar-dark" style="background-color: #512ca8;">
+         <span  class="navbar-brand" href="#">DL Calculator</span >
+         
+      </nav>
+      <div class="container-fluid" style="padding: 0px; margin: 0px;">
+         <div class="calc">
+            <div class="row" style="flex-wrap: nowrap;"></div>
+            <div class="inputVal" >
+               <textarea class="#input" id="window" value="" rows="3"  disabled style="width:100%; resize: none;box-shadow: none; border: none;overflow: auto; outline: none; margin-bottom: 15px; text-align:right;" ></textarea>
+            </div>
+            <div class="row" style="margin-right:0;">
+               <canvas id="myCanvas" width="236" height="236"  ></canvas>
+               <div class=" btn-group-vertical btn-group btn-group-lg rounded-0"  style="flex-wrap: nowrap;">
+                  <button value="" id="backspace" type="button" class="btn btn-secondary rounded-0">&#x2190</button>
+                  <button value="-" id="subtract" type="button" class="btn btn-secondary"  >-</button>
+                  <button value="+" id="add" type="button" class="btn btn-secondary">+</button>
+                  <button value="*" id="multiply" type="button" class="btn btn-secondary">x</button>
+                  <button value="/" id="divide" type="button" class="btn btn-secondary rounded-0">/</button>
+                  
+               </div>
+            </div><div class="btn-group btn-group btn-group-lg rounded-0" style="align-items:initial;vertical-align:top;margin-left: 120px;" role="group" aria-label="Basic example"><button value="." id="dot" type="button" class="btn btn-secondary rounded-0" style="width: 51.24px;">.</button>
+						<button value="" id="clear" type="button" class="btn btn-secondary rounded-0 	" style="width: 51.24px;">C</button>
+						<button value="=" id="equal" type="button" class="btn btn-secondary rounded-0" style="width: 51.24px;">=</button></div>
+         </div></div>
+				 
+      </div>
+      </div>
+      <script>
+         window.onload = function() {
+         	var myCanvas = document.getElementById("myCanvas");
+             var ctx = myCanvas.getContext("2d");
+             timeoutID = 0;
+             ctx.fillStyle = '#FFFFFF';
+         	ctx.fillRect(0, 0, 236, 236);
+             
+             // Mouse Event Handlers
+         	if(myCanvas){
+         		var isDown = false;
+         		var canvasX, canvasY;
+         		ctx.lineWidth = 5;
+         		
+         		$(myCanvas)
+         		.mousedown(function(e){
+                     clearTimeout(timeoutID);
+         			isDown = true;
+         			ctx.beginPath();
+         			canvasX = e.pageX - myCanvas.offsetLeft;
+         			canvasY = e.pageY - myCanvas.offsetTop;
+         			ctx.moveTo(canvasX, canvasY);
+         		})
+         		.mousemove(function(e){
+         			if(isDown !== false) {
+                         clearTimeout(timeoutID);
+         				canvasX = e.pageX - myCanvas.offsetLeft;
+         				canvasY = e.pageY - myCanvas.offsetTop;
+         				ctx.lineCap = 'round';
+         				ctx.lineWidth = 10;
+         
+         				
+         				ctx.lineTo(canvasX, canvasY);
+         				
+         				ctx.strokeStyle = "#140078";
+         				ctx.stroke();
+         			}
+         		})
+         		.mouseup(function(e){
+         			isDown = false;
+                     ctx.closePath();
+                     var based = myCanvas.toDataURL();
+                     timeoutID = window.setTimeout(function(){ctx.fillStyle = '#FFFFFF';ctx.fillRect(0, 0, myCanvas.width, myCanvas.height);pywebview.api.predict(based).then(get_content); }, 870);
+         		});
+         	}
+         	
+         	// Touch Events Handlers
+         	draw = {
+         		started: false,
+         		start: function(evt) {
+         
+         			ctx.beginPath();
+         			ctx.moveTo(
+         				evt.touches[0].pageX,
+         				evt.touches[0].pageY
+         			);
+         
+         			this.started = true;
+         
+         		},
+         		move: function(evt) {
+         
+         			if (this.started) {
+         				ctx.lineTo(
+         					evt.touches[0].pageX,
+         					evt.touches[0].pageY
+         				);
+         
+         				ctx.strokeStyle = "#000";
+         				ctx.lineWidth = 5;
+         				ctx.stroke();
+         			}
+         
+         		},
+         		end: function(evt) {
+         			this.started = false;
+         		}
+         	};
+         	
+         	// Touch Events
+         	myCanvas.addEventListener('touchstart', draw.start, false);
+         	myCanvas.addEventListener('touchend', draw.end, false);
+         	myCanvas.addEventListener('touchmove', draw.move, false);
+         	function get_content(response){
+         	  var v = response.message;
+         		var total = $('textarea').val($('textarea').val() + v);
+           }
+            $('#subtract, #multiply, #divide, #power, #dot, #add').click(function(){
+         		var v = $(this).val();
+             var total = $('textarea').val($('textarea').val() + v); 
+             });
+           
+           //clicking equal sign evaluates the textarea
+           $('#equal').click(function(){
+             $('textarea').val(eval($('textarea').val()));
+             });
+         
+           
+           $('#clear').click(function(){
+               $('textarea').val('');
+             });
+           
+             
+           $('#backspace').click(function(){
+               $('textarea').val($('textarea').val().substring(0, $('textarea').val().length - 1));
+             });
+         
+         };
+         $("#window").css({
+         	fontSize: "2rem"
+         })
+         
+           //take html tags with assigned values and set to variable.
+           //set textarea to the value of "blank", and add to values.
+         
+      </script>
+   </body>
+</html>
